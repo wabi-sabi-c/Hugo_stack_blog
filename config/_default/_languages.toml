@@ -2,5 +2,11 @@
 [en]
     label     = "English"
     direction = "ltr"
-    title     = "Example Site"
+    title     = "Hugo Theme Stack"
     weight    = 1
+
+[zh]
+    label  = "简体中文"
+    direction = "ltr"
+    title  = "Hugo 主题 Stack"
+    weight = 2

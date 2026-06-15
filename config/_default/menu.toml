@@ -6,6 +6,22 @@
 #[main.params]
 #icon = "home"
 #newtab = true
+# [[main]]
+#     name = "标签 | Tags"
+#     url = "/tags/"
+#     weight = -90
+#     [main.params]
+#         icon = "tag"
+#         newtab = true
+
+# [[main]]
+#     name = "搜索 | Search"
+#     url = "/search/"
+#     weight = -70
+#     [main.params]
+#         icon = "search"
+#         newtab = true
+
 
 [[social]]
     identifier = "github"

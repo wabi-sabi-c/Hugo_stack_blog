@@ -7,6 +7,27 @@ title   = "wabi-sabi"
 # See all available values at https://github.com/CaiJimmy/hugo-theme-stack/tree/master/i18n
 defaultContentLanguage = "zh"
 
+# 定义多语言
+[languages]
+  [languages.zh]
+    label = "中文"
+    weight = 1                      
+    title = "wabi-sabi"
+
+
+  [languages.en]
+    label = "English"
+    weight = 2
+    title = "wabi-sabi"
+
+
+# enableGitInfo = true
+
+# [frontmatter]
+# lastmod = [':git', ':fileModTime', ':default']
+
+
+
 # Set hasCJKLanguage to true if DefaultContentLanguage is in [zh-cn ja ko]
 # This will make .Summary and .WordCount behave correctly for CJK languages.
 hasCJKLanguage = true
