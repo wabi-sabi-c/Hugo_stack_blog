@@ -38,7 +38,7 @@ Run:
 ```bash
 hugo mod get -u github.com/CaiJimmy/hugo-theme-stack/v4
 hugo mod tidy
-
+# 查看主题版本
 hugo mod graph
 ```
 
@@ -47,3 +47,13 @@ hugo mod graph
 ## Deploy to another static page hostings
 
 Check official Hugo documentation: https://gohugo.io/host-and-deploy/
+
+
+
+```bash
+# 模板叶子包使用
+hugo new --kind post-bundle post/your_blog_name
+# 预览
+hugo server -D
+
+```

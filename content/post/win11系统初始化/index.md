@@ -1,7 +1,7 @@
 ---
 title: "win11系统初始化"
 date: 2026-06-22T17:19:23+08:00
-draft: true         # 是否为草稿
+# draft: true         # 是否为草稿
 description: "这是第二篇文章，主要是在win系统中实现高效的存储文件，方便备份"
 image: "cover.jpg"
 categories: [documentation]

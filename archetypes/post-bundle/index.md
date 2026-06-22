@@ -1,7 +1,7 @@
 ---
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
-draft: true         # 是否为草稿
+# draft: true         # 是否为草稿
 description: ""
 image: "cover.jpg"
 categories: []
