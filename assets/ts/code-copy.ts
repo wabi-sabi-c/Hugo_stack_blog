@@ -1,15 +1,9 @@
-import * as params from '@params';
-
 export function setupCodeCopy() {
-    /**
-     * Add copy button to code block
-    */
     const highlights = document.querySelectorAll('.article-content div.highlight');
-    const copyText = params.codeblock.copy,
-        copiedText = params.codeblock.copied;
+    const copyText = 'Copy';
+    const copiedText = 'Copied!';
 
     if (!navigator.clipboard) {
-        /// Clipboard API is only supported in secure contexts (HTTPS)
         console.warn('Clipboard API not supported, copy button will not work.');
         return;
     }
@@ -27,15 +21,14 @@ export function setupCodeCopy() {
             navigator.clipboard.writeText(codeBlock.textContent)
                 .then(() => {
                     copyButton.textContent = copiedText;
-
                     setTimeout(() => {
                         copyButton.textContent = copyText;
                     }, 1000);
                 })
                 .catch(err => {
-                    alert(err)
+                    alert(err);
                     console.log('Something went wrong', err);
                 });
         });
     });
-};
+}

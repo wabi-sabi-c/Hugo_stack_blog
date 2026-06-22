@@ -36,3 +36,374 @@
     }
   }
 }
+
+
+/* ==========================================
+   代码块自动折叠 + 悬浮 + 复制按钮美化
+   不含 Mac 风格三色点
+   ========================================== */
+
+/* 1. 代码块容器卡片效果 */
+.article-content .highlight {
+    background-color: var(--pre-background-color);
+    border-radius: 10px;
+    margin: 1.5rem 0 !important;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+[data-scheme="dark"] .article-content .highlight {
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* 2. 代码内容区域 */
+.article-content .highlight pre {
+    padding: 16px;
+    margin: 0;
+    background-color: transparent;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* 3. 复制按钮 - 毛玻璃效果 */
+.article-content .copyCodeButton {
+    position: absolute;
+    top: 17px;
+    right: 12px;
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+    border-radius: 6px;
+    padding: 3px 14px 5px;
+    color: #4b5563;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    opacity: 1;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.article-content .copyCodeButton:hover {
+    background: rgba(255, 255, 255, 0.7);
+    color: #1f2937;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.05);
+    border-color: rgba(255, 255, 255, 0.8);
+    transform: translateY(calc(-50% - 1px));
+}
+
+.article-content .copyCodeButton:active {
+    transform: translateY(-50%);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+[data-scheme="dark"] .article-content .copyCodeButton {
+    background: rgba(40, 44, 52, 0.95);
+    color: #eee;
+    border: 1px solid #444;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+[data-scheme="dark"] .article-content .copyCodeButton:hover {
+    background: rgba(65, 70, 80, 0.9);
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    transform: translateY(calc(-50% - 1px));
+}
+
+/* 4. 滚动条美化 */
+.article-content pre::-webkit-scrollbar,
+.article-content .highlight pre::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+    background: transparent;
+}
+
+.article-content pre::-webkit-scrollbar-thumb,
+.article-content .highlight pre::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.article-content pre::-webkit-scrollbar-corner,
+.article-content .highlight pre::-webkit-scrollbar-corner {
+    background: transparent;
+}
+
+.article-content pre,
+.article-content .highlight pre {
+    scrollbar-width: auto;
+    scrollbar-color: transparent transparent;
+    transition: scrollbar-color 0.2s;
+}
+
+.article-content pre:hover,
+.article-content pre:focus-within,
+.article-content .highlight pre:hover,
+.article-content .highlight pre:focus-within {
+    scrollbar-color: rgba(120, 130, 140, 0.25) transparent;
+}
+
+.article-content pre:hover::-webkit-scrollbar-thumb,
+.article-content pre:focus-within::-webkit-scrollbar-thumb,
+.article-content .highlight pre:hover::-webkit-scrollbar-thumb,
+.article-content .highlight pre:focus-within::-webkit-scrollbar-thumb {
+    background: rgba(120, 130, 140, 0.25);
+}
+
+.article-content pre:hover::-webkit-scrollbar-thumb:hover,
+.article-content pre:focus-within::-webkit-scrollbar-thumb:hover,
+.article-content .highlight pre:hover::-webkit-scrollbar-thumb:hover,
+.article-content .highlight pre:focus-within::-webkit-scrollbar-thumb:hover {
+    background: rgba(120, 130, 140, 0.45);
+}
+
+[data-scheme="dark"] .article-content pre:hover,
+[data-scheme="dark"] .article-content pre:focus-within,
+[data-scheme="dark"] .article-content .highlight pre:hover,
+[data-scheme="dark"] .article-content .highlight pre:focus-within {
+    scrollbar-color: rgba(120, 130, 140, 0.35) transparent;
+}
+
+[data-scheme="dark"] .article-content pre:hover::-webkit-scrollbar-thumb,
+[data-scheme="dark"] .article-content pre:focus-within::-webkit-scrollbar-thumb,
+[data-scheme="dark"] .article-content .highlight pre:hover::-webkit-scrollbar-thumb,
+[data-scheme="dark"] .article-content .highlight pre:focus-within::-webkit-scrollbar-thumb {
+    background: rgba(120, 130, 140, 0.35);
+}
+
+[data-scheme="dark"] .article-content pre:hover::-webkit-scrollbar-thumb:hover,
+[data-scheme="dark"] .article-content pre:focus-within::-webkit-scrollbar-thumb:hover,
+[data-scheme="dark"] .article-content .highlight pre:hover::-webkit-scrollbar-thumb:hover,
+[data-scheme="dark"] .article-content .highlight pre:focus-within::-webkit-scrollbar-thumb:hover {
+    background: rgba(120, 130, 140, 0.55);
+}
+
+/* 5. 自动折叠长代码块（>600px） */
+.highlight {
+    &.collapsed {
+        max-height: 600px;
+        overflow: hidden;
+        -webkit-mask-image: linear-gradient(to bottom, black 92%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 92%, transparent 100%);
+    }
+
+    &.expanded {
+        max-height: none;
+        -webkit-mask-image: none;
+        mask-image: none;
+    }
+}
+
+/* 6. 展开/收起按钮 */
+.code-expand-btn {
+    display: none;
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background: linear-gradient(to bottom, rgba(242, 241, 235, 0), var(--pre-background-color) 95%);
+    cursor: pointer;
+    z-index: 10;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 15px;
+    border-radius: 0 0 10px 10px;
+    transition: all 0.3s ease;
+    
+    &::after {
+        content: attr(data-expand);
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--card-text-color-main);
+        background: var(--card-background);
+        padding: 6px 20px;
+        border-radius: 15px;
+        border: 1px solid var(--card-separator-color);
+        box-shadow: var(--shadow-l1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.2s ease;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235d5d5d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        padding-right: 32px;
+    }
+
+    &:hover::after {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-l2);
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+
+    .collapsed & {
+        display: flex;
+    }
+
+    .highlight.expanded & {
+        display: flex;
+        position: relative;
+        height: 20px;
+        padding-bottom: 0px;
+        background: transparent;
+        margin-top: 10px;
+
+        &::after {
+            content: attr(data-collapse);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%235d5d5d' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='18 15 12 9 6 15'%3E%3C/polyline%3E%3C/svg%3E");
+        }
+    }
+}
+
+[data-scheme="dark"] .code-expand-btn {
+    &::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23adbac7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+}
+
+[data-scheme="dark"] .highlight.expanded .code-expand-btn {
+    &::after {
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23adbac7' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='18 15 12 9 6 15'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+}
+
+@media (max-width: 768px) {
+    .highlight.collapsed {
+        max-height: 450px;
+    }
+}
+
+
+/* ==========================================
+   Title 短横线分割线
+   ========================================== */
+.short-divider {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.short-divider::before,
+.short-divider::after {
+    content: "—";
+    margin: 0 12px;
+    color: var(--card-text-color-tertiary);
+}
+
+.divider-title {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* ==========================================
+   时间线
+   ========================================== */
+.timeline-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    background: transparent;
+    list-style: none;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background: var(--card-separator-color);
+    transform: translateX(-50%);
+    transition: background 0.3s;
+}
+
+.timeline-item {
+    display: flex;
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.timeline-marker {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    border: 3px solid var(--card-background);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    box-shadow: 0 0 0 4px var(--body-background);
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.timeline-content {
+    width: calc(50% - 40px);
+    padding: 12px 15px;
+    border-radius: 10px;
+    background: var(--card-background);
+    box-shadow: var(--shadow-l1);
+    color: var(--card-text-color-main);
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    margin-top: 0;
+}
+
+.timeline-item:nth-child(odd) .timeline-content {
+    margin-left: auto;
+}
+
+.timeline-item:nth-child(even) .timeline-content {
+    margin-right: auto;
+}
+
+.timeline-date {
+    color: var(--accent-color);
+    margin-bottom: 8px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.timeline-text {
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+/* 响应式：移动端单列 */
+@media (max-width: 768px) {
+    .timeline-container {
+        max-width: 100%;
+    }
+
+    .timeline-container::before {
+        left: 20px;
+    }
+
+    .timeline-item {
+        flex-direction: column;
+    }
+
+    .timeline-marker {
+        left: 20px;
+    }
+
+    .timeline-content {
+        width: calc(100% - 45px);
+        margin-left: 45px !important;
+    }
+}

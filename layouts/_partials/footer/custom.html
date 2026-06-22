@@ -1,0 +1,50 @@
+{{- /* 自定义折叠长代码块 */ -}}
+<script>
+  (function() {
+    function initCodeBlocks() {
+      const MAX_HEIGHT = 600; 
+      const highlightBlocks = document.querySelectorAll('.article-content .highlight');
+      
+      highlightBlocks.forEach(block => {
+        if (block.dataset.codeConfigured) return;
+        
+        const pre = block.querySelector('pre');
+        const height = pre ? pre.scrollHeight : block.scrollHeight;
+
+        if (height > MAX_HEIGHT + 40) {
+          block.classList.add('collapsed');
+          
+          const expandBtn = document.createElement('div');
+          expandBtn.className = 'code-expand-btn';
+          expandBtn.dataset.expand = "{{ if eq .Site.Language.Lang `en` }}Expand Code{{ else }}展开代码{{ end }}";
+          expandBtn.dataset.collapse = "{{ if eq .Site.Language.Lang `en` }}Collapse Code{{ else }}收起代码{{ end }}";
+          
+          block.appendChild(expandBtn);
+          
+          expandBtn.addEventListener('click', function() {
+            if (block.classList.contains('collapsed')) {
+              block.classList.remove('collapsed');
+              block.classList.add('expanded');
+            } else {
+              // 收起时保持滚动位置
+              const offsetTop = block.getBoundingClientRect().top + window.pageYOffset;
+              const html = document.documentElement;
+              const originalScrollBehavior = html.style.scrollBehavior;
+              html.style.scrollBehavior = 'auto';
+              block.classList.remove('expanded');
+              block.classList.add('collapsed');
+              window.scrollTo(0, offsetTop - 80);
+              requestAnimationFrame(() => {
+                html.style.scrollBehavior = originalScrollBehavior;
+              });
+            }
+          });
+        }
+        block.dataset.codeConfigured = 'true';
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', initCodeBlocks);
+    window.addEventListener('load', initCodeBlocks);
+  })();
+</script>
