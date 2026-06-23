@@ -11,7 +11,7 @@ defaultContentLanguage = "zh"
 [languages]
   [languages.zh]
     label = "中文"
-    weight = 1                      
+    weight = 1
     title = "wabi-sabi"
 
 
@@ -38,3 +38,7 @@ hasCJKLanguage = true
 [pagination]
     pagerSize = 5
 
+[taxonomies]
+  series = "series"
+  category = "categories"
+  tag = "tags"

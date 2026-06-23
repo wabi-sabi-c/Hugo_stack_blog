@@ -1,6 +1,6 @@
 {{ define "body-class" }}
     article-page
-    {{/* 
+    {{/*
         Enable the right sidebar if
             - Widget different from 'TOC' is enabled
             - TOC is enabled and not empty
@@ -18,11 +18,12 @@
     {{- $TOCEnabled := and (default .Site.Params.article.toc .Params.toc) $TOCWidgetEnabled -}}
     {{- $hasTOC := ge (len .TableOfContents) 100 -}}
     {{- .Scratch.Set "TOCEnabled" (and $TOCEnabled $hasTOC) -}}
-    
+
     {{- .Scratch.Set "hasWidget" (or $HasWidgetNotTOC (and $TOCEnabled $hasTOC)) -}}
 {{ end }}
 
 {{ define "main" }}
+    {{ partial "series-nav.html" . }}   <!-- 新增系列导航，显示在文章顶部 -->
     {{ partial "article/article.html" . }}
 
     {{ if .Params.links }}
@@ -30,7 +31,7 @@
     {{ end }}
 
     {{ partial "article/components/related-content" . }}
-     
+
     {{ if not (eq .Params.comments false) }}
         {{ partial "comments/include" . }}
     {{ end }}
@@ -39,6 +40,7 @@
 
     {{ partialCached "article/components/photoswipe" . }}
     {{ partial "article/components/mermaid" . }}
+    {{ partial "back-to-top.html" . }}
 {{ end }}
 
 {{ define "right-sidebar" }}

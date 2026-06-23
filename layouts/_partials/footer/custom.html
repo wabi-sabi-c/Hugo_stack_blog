@@ -2,25 +2,25 @@
 <script>
   (function() {
     function initCodeBlocks() {
-      const MAX_HEIGHT = 600; 
+      const MAX_HEIGHT = 600;
       const highlightBlocks = document.querySelectorAll('.article-content .highlight');
-      
+
       highlightBlocks.forEach(block => {
         if (block.dataset.codeConfigured) return;
-        
+
         const pre = block.querySelector('pre');
         const height = pre ? pre.scrollHeight : block.scrollHeight;
 
         if (height > MAX_HEIGHT + 40) {
           block.classList.add('collapsed');
-          
+
           const expandBtn = document.createElement('div');
           expandBtn.className = 'code-expand-btn';
           expandBtn.dataset.expand = "{{ if eq .Site.Language.Lang `en` }}Expand Code{{ else }}展开代码{{ end }}";
           expandBtn.dataset.collapse = "{{ if eq .Site.Language.Lang `en` }}Collapse Code{{ else }}收起代码{{ end }}";
-          
+
           block.appendChild(expandBtn);
-          
+
           expandBtn.addEventListener('click', function() {
             if (block.classList.contains('collapsed')) {
               block.classList.remove('collapsed');
@@ -46,5 +46,33 @@
 
     document.addEventListener('DOMContentLoaded', initCodeBlocks);
     window.addEventListener('load', initCodeBlocks);
+  })();
+</script>
+
+
+{{- /* 返回顶部按钮控制脚本 */ -}}
+<script>
+  (function() {
+    const btn = document.getElementById('back-to-top');
+    if (!btn) return;
+
+    // 控制显示/隐藏
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 400) {
+        btn.classList.add('visible');
+      } else {
+        btn.classList.remove('visible');
+      }
+    });
+
+    // 点击滚动到顶部
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      // 添加微小的“按下”动画
+      btn.style.transform = 'scale(0.9)';
+      setTimeout(() => { btn.style.transform = ''; }, 200);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   })();
 </script>

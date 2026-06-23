@@ -1,0 +1,58 @@
+{{- with .GetTerms "series" -}}
+  {{- range . -}}
+    {{- $seriesPages := .Pages.ByDate -}}
+    {{- $currentIndex := -1 -}}
+    {{- range $idx, $page := $seriesPages -}}
+      {{- if eq $page.Permalink $.Page.Permalink -}}
+        {{- $currentIndex = $idx -}}
+      {{- end -}}
+    {{- end -}}
+
+    <nav class="series-nav" role="navigation" aria-label="系列导航">
+      <!-- 头部：系列标题 + 进度 -->
+      <div class="series-header">
+        <a href="{{ .RelPermalink }}" class="series-title">
+          📚 {{ .Title }}
+        </a>
+        <span class="series-progress">
+          第 {{ add $currentIndex 1 }} / {{ len $seriesPages }} 篇
+        </span>
+      </div>
+
+      <!-- 上一篇 / 下一篇按钮 -->
+      <div class="series-buttons">
+        {{- with (index $seriesPages (sub $currentIndex 1)) -}}
+          <a href="{{ .RelPermalink }}" class="series-prev">
+            ← 上一篇：{{ .Title }}
+          </a>
+        {{- else -}}
+          <span class="series-prev disabled">← 已是第一篇</span>
+        {{- end -}}
+
+        {{- with (index $seriesPages (add $currentIndex 1)) -}}
+          <a href="{{ .RelPermalink }}" class="series-next">
+            下一篇：{{ .Title }} →
+          </a>
+        {{- else -}}
+          <span class="series-next disabled">已是最后一篇 →</span>
+        {{- end -}}
+      </div>
+
+      <!-- 可展开的全部文章列表 -->
+      <details class="series-list">
+        <summary>📑 全部 {{ len $seriesPages }} 篇文章</summary>
+        <ol>
+          {{- range $idx, $page := $seriesPages -}}
+            <li>
+              {{- if eq $page.Permalink $.Page.Permalink -}}
+                <strong class="current">第 {{ add $idx 1 }} 篇：{{ $page.Title }}</strong>
+              {{- else -}}
+                <a href="{{ $page.Permalink }}" onclick="event.stopPropagation();">第 {{ add $idx 1 }} 篇：{{ $page.Title }}</a>
+              {{- end -}}
+            </li>
+          {{- end -}}
+        </ol>
+      </details>
+    </nav>
+  {{- end -}}
+{{- end -}}

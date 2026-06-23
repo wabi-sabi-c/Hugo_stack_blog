@@ -1,7 +1,35 @@
 {{- $pages := .Pages -}}
+{{- $context := .Context -}}
 
-{{- if eq .Context.Site.Params.SortBy "lastmod" -}}
-    {{- $pages = $pages.ByLastmod.Reverse -}}
+{{- /* 判断页面类型 */ -}}
+{{- $isHome := $context.IsHome -}}
+{{- $kind := $context.Kind -}}
+{{- $taxonomy := "" -}}
+{{- if eq $kind "term" -}}
+    {{- $taxonomy = $context.Data.Plural -}}  {{/* 例如 "categories", "tags", "series" */ -}}
+{{- end -}}
+
+{{- if $isHome -}}
+    {{- /* 1. 主页：按日期倒序（忽略 weight） */ -}}
+    {{- $pages = $pages.ByDate.Reverse -}}
+
+{{- else if eq $kind "term" -}}
+    {{- /* 2. Term 页面（分类/标签/系列） */ -}}
+    {{- if eq $taxonomy "series" -}}
+        {{- /* 系列页：按 weight 排序（值小在前），同权重按日期 */ -}}
+        {{- $pages = $pages.ByWeight -}}
+    {{- else -}}
+        {{- /* 分类、标签页：按日期倒序（最新在前） */ -}}
+        {{- $pages = $pages.ByDate.Reverse -}}
+    {{- end -}}
+
+{{- else -}}
+    {{- /* 3. 其他页面（如普通 section 列表）遵循主题默认排序 */ -}}
+    {{- if eq $context.Site.Params.SortBy "lastmod" -}}
+        {{- $pages = $pages.ByLastmod.Reverse -}}
+    {{- else -}}
+        {{- $pages = $pages.ByWeight -}}
+    {{- end -}}
 {{- end -}}
 
 {{- return $pages -}}
