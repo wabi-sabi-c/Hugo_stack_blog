@@ -44,40 +44,114 @@ tags: ["FastAPI", "全栈开发", "Python"]
 
 <!--more-->
 
-# 本章导读
+## 本章导读
 
 <!-- 在这里写下本章的简要介绍和学习目标 -->
 - 读README.md文件
 - 拉取项目到本地
 - 运行项目
-# 正文内容
+
 
 <!-- 从这里开始撰写你的学习笔记 -->
 
-# 一、不使用README.md中的步骤拉取项目到本地(默认已安装Git、Docker和语言环境)
+## 一、不使用README.md中的步骤拉取项目到本地(默认已安装Git、Docker和语言环境)
 
 1. 创建一个文件夹，并进入该文件夹
 2. 运行命令：`git clone --depth=1 https://github.com/fastapi/full-stack-fastapi-template.git`
     - git clone --depth=1 表示只拉取一次最新的代码，不拉取所有历史记录
 3. 进入项目目录：`cd full-stack-fastapi-template`
-4. 启动服务器（首次运行会构建镜像，耗时稍长）：`docker compose up -d`
+4. 启动服务器（首次运行会构建镜像，耗时稍长）：`docker compose up -d`/ `docker compose watch`
+    > **推荐方式**：`docker compose watch`:这个命令会启动所有服务，并开启“文件监听”模式。当你修改代码时，相关服务会自动重新加载，非常适合开发环境。
+    > `docker compose up -d`:这是标准的后台启动模式。但在首次启动时，由于需要构建镜像和初始化数据库，可能需要等待较长时间。如果你只是想在后台运行，也可以使用此命令。
+
+
+
+    > 1. 当然直接运行 docker compose up -d **大概率无法直接成功运行**
+    > 2. 原因：后端代码里对 SECRET_KEY 做了**强校验**，在 `backend/app/core/config.py` 中找到这段逻辑:
+    > `# 代码中明确要求 SECRET_KEY 的长度必须 >= 32 个字符 SECRET_KEY: str = Field( ...,min_length=32,  # 这里强制要求至少32位！description="Secret key for JWT tokens...")`
+    >而 `.env` 文件里默认的 `SECRET_KEY=changethis` 只有 9 个字符。当后端容器启动时，Pydantic 进行配置验证会直接抛出 `AssertionError` 或验证失败错误，容器会立刻退出，你连 `http://localhost:8000/docs` 都访问不了
+    > 3. **解决方法**：在项目根目录下找到 `.env`文件，必须将以下占位符修改为强密码或你自己的配置:
+    > 在backend里 `SECRET_KEY=changethis` ：FastAPI 应用的安全密钥、
+    > `FIRST_SUPERUSER_PASSWORD=changethis`: 初始超级管理员的密码、
+    > 在postgres里 `POSTGRES_PASSWORD=changethis`:PostgreSQL 数据库的密码，
+    > 在终端使用`openssl rand -hex 32`生成一个强密码替换原密码changethis
+
 5. 验证与访问：
    - 后端 API 文档：`http://localhost:8000/docs`
    - 前端界面：`http://localhost:5173`
+   - API 交互文档 (Swagger UI)：`http://localhost:8000/docs`
+   - 数据库管理 (Adminer)：`http://localhost:8080`
+   - 邮件拦截 (Mailcatcher)：`http://localhost:1080`
 6. 停止服务器：`docker compose down`
+
+**还报错**：
+- 第一步：确认 compose 文件配置正确
+    检查根目录下的 compose.yml 和 compose.override.yml（如果有）。backend 和 frontend 服务应该使用 `build` 指令，而不是 `image`。如果你发现 backend 或 frontend 下有 `image: ... `字段，请删除它（或注释掉），确保使用 `build`。
+```dockerfile
+    backend:
+        # image: '${DOCKER_IMAGE_BACKEND?Variable not set}:${TAG-latest}'
+        restart: always
+        networks:
+        - traefik-public
+        - default
+        ...
+
+    frontend:
+        # image: '${DOCKER_IMAGE_FRONTEND?Variable not set}:${TAG-latest}'
+        restart: always
+        networks:
+        - traefik-public
+        - default
+```
+- 第二步：强制构建并启动
+    `docker compose up -d --build`
+- 如果构建过程中又遇到 429 错误（例如基础镜像拉取失败）配置稳定的镜像加速器或者科学上网,要不就不停的重试5次`docker compose up -d --build`
+- 第三步：backend：Dockerfile 中通过 `COPY --from=ghcr.io/astral-sh/uv:0.9.26` 从 GitHub Container Registry（ghcr.io）拉取 uv 的二进制文件。这个拉取步骤失败,直接就修改这一行为`RUN pip install uv==0.9.26`/`RUN pip install -i https://pypi.tuna.tsinghua.edu.cn/simple uv==0.9.26`通过 pip 安装，避免拉取 ghcr.io
+- 第四步：frontend: Dockerfile.playwright中 Bun镜像安装失败，所以使用**多阶段构建 (multi-stage build)** 直接复制一下内容替换Dockerfile.playwright
+```dockerfile
+    # 阶段 1: 使用官方 Bun 镜像来安装依赖
+    FROM oven/bun:1 AS bun-builder
+    WORKDIR /app
+
+    # 复制依赖配置文件
+    COPY package.json bun.lock /app/
+    COPY frontend/package.json /app/frontend/
+
+    WORKDIR /app/frontend
+    # 在 Bun 镜像内执行安装，这一步会很顺畅
+    RUN bun install
+
+    # 阶段 2: 原有的 Playwright 镜像
+    FROM mcr.microsoft.com/playwright:v1.58.2-noble
+
+    WORKDIR /app
+
+    # 从 bun-builder 阶段复制已安装的依赖
+    COPY --from=bun-builder /app /app
+    # 复制你的前端源码
+    COPY ./frontend /app/frontend
+
+    # 设置环境变量 (如果需要)
+    ARG VITE_API_URL
+    # ENV VITE_API_URL=$VITE_API_URL
+```
 
 > 没问题，可以开始使用啦，说明可以正式开始学习这个项目模板了
 
+> [!TIP]
+> **也可以不用docker compose 启动项目,网络问题无法解决会很慢，直接本地安装各种需要的依赖启动项目**
+> **当然完全不启动也可以，学习这个模板，仿写一个项目再运行也是可以的，毕竟官方维护的模板还是没那么多报错**
 
-# 二、开始读README.md
+
+## 二、开始读README.md
 
 
 这是 README.md 的逐段双语对照翻译（原文在上，中文在下）：
 
 ---
 
-# Full Stack FastAPI Template
-**Full Stack FastAPI Template（全栈 FastAPI 模板）**
+### Full Stack FastAPI Template | **全栈 FastAPI 模板**
+
 
 
 <a href="https://github.com/fastapi/full-stack-fastapi-template/actions?query=workflow%3A%22Test+Docker+Compose%22" target="_blank"><img src="https://github.com/fastapi/full-stack-fastapi-template/workflows/Test%20Docker%20Compose/badge.svg" alt="Test Docker Compose"></a>
@@ -88,8 +162,7 @@ tags: ["FastAPI", "全栈开发", "Python"]
 
 ---
 
-## Technology Stack and Features
-**技术栈与功能特性**
+### Technology Stack and Features | **技术栈与功能特性**
 
 
 - ⚡ [**FastAPI**](https://fastapi.tiangolo.com) for the Python backend API.
@@ -133,39 +206,33 @@ tags: ["FastAPI", "全栈开发", "Python"]
 
 ---
 
-### Dashboard Login
-**仪表盘 - 登录页**
+#### Dashboard Login | **仪表盘 - 登录页**
 
 ![](login.png)
 
 
-### Dashboard - Admin
-**仪表盘 - 管理员**
+#### Dashboard - Admin | **仪表盘 - 管理员**
 
 ![](dashboard.png)
 
 
-### Dashboard - Items
-**仪表盘 - 物品**
+#### Dashboard - Items | **仪表盘 - 物品**
 
 ![](dashboard-items.png)
 
-### Dashboard - Dark Mode
-**仪表盘 - 暗色模式**
+#### Dashboard - Dark Mode | **仪表盘 - 暗色模式**
 
 ![](dashboard-dark.png)
 
 
-### Interactive API Documentation
-**交互式 API 文档**
+#### Interactive API Documentation | **交互式 API 文档**
 
 
 ![](docs.png)
 
 ---
 
-## How To Use It
-**如何使用**
+### How To Use It | **如何使用**
 
 
 You can **just fork or clone** this repository and use it as is.
@@ -178,9 +245,7 @@ You can **just fork or clone** this repository and use it as is.
 
 ---
 
-### How to Use a Private Repository
-
-**如何使用私有仓库**
+#### How to Use a Private Repository | **如何使用私有仓库**
 
 If you want to have a private repository, GitHub won't allow you to simply fork it as it doesn't allow changing the visibility of forks.
 
@@ -237,8 +302,7 @@ git push -u origin master
 
 ---
 
-### Update From the Original Template
-**从原始模板获取更新**
+#### Update From the Original Template | **从原始模板获取更新**
 
 
 After cloning the repository, and after doing changes, you might want to get the latest changes from this original template.
@@ -285,8 +349,7 @@ git merge --continue
 ```
 ---
 
-### Configure
-**配置**
+#### Configure | **配置**
 
 
 You can then update configs in the `.env` files to customize your configurations.
@@ -315,8 +378,7 @@ Read the [deployment.md](./deployment.md) docs for more details.
 
 ---
 
-### Generate Secret Keys
-**生成密钥**
+#### Generate Secret Keys | **生成密钥**
 
 
 Some environment variables in the `.env` file have a default value of `changethis`.
@@ -340,8 +402,7 @@ Copy the content and use that as password / secret key. And run that again to ge
 
 ---
 
-## How To Use It - Alternative With Copier
-**如何使用 - 通过 Copier 的替代方案**
+### How To Use It - Alternative With Copier | **如何使用 - 通过 Copier 的替代方案**
 
 
 This repository also supports generating a new project using [Copier](https://copier.readthedocs.io).
@@ -355,8 +416,7 @@ It will copy all the files, ask you configuration questions, and update the `.en
 
 ---
 
-### Install Copier
-**安装 Copier**
+#### Install Copier | **安装 Copier**
 
 
 You can install Copier with:
@@ -384,8 +444,7 @@ pipx install copier
 
 ---
 
-### Generate a Project With Copier
-**使用 Copier 生成项目**
+#### Generate a Project With Copier | **使用 Copier 生成项目**
 
 
 Decide a name for your new project's directory, you will use it below. For example, `my-awesome-project`.
@@ -420,8 +479,7 @@ pipx run copier copy https://github.com/fastapi/full-stack-fastapi-template my-a
 
 ---
 
-### Input Variables
-**输入变量**
+#### Input Variables | **输入变量**
 
 
 Copier will ask you for some data, you might want to have at hand before generating the project.
@@ -464,8 +522,7 @@ The input variables, with their default values (some auto generated) are:
 
 ---
 
-## Backend Development
-**后端开发**
+### Backend Development | **后端开发**
 
 
 Backend docs: [backend/README.md](./backend/README.md).
@@ -474,8 +531,7 @@ Backend docs: [backend/README.md](./backend/README.md).
 
 ---
 
-## Frontend Development
-**前端开发**
+### Frontend Development | **前端开发**
 
 
 Frontend docs: [frontend/README.md](./frontend/README.md).
@@ -484,8 +540,7 @@ Frontend docs: [frontend/README.md](./frontend/README.md).
 
 ---
 
-## Deployment
-**部署**
+### Deployment | **部署**
 
 
 Deployment docs: [deployment.md](./deployment.md).
@@ -494,8 +549,7 @@ Deployment docs: [deployment.md](./deployment.md).
 
 ---
 
-## Development
-**开发**
+### Development | **开发**
 
 General development docs: [development.md](./development.md).
 
@@ -508,8 +562,7 @@ This includes using Docker Compose, custom local domains, `.env` configurations,
 
 ---
 
-## Release Notes
-**版本发布说明**
+### Release Notes | **版本发布说明**
 
 
 
@@ -520,8 +573,7 @@ Check the file [release-notes.md](./release-notes.md).
 ---
 
 
-## License
-**许可证**
+### License | **许可证**
 
 
 The Full Stack FastAPI Template is licensed under the terms of the MIT license.

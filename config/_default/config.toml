@@ -42,3 +42,7 @@ hasCJKLanguage = true
   series = "series"
   category = "categories"
   tag = "tags"
+
+[imaging]
+    quality = 80
+    format = "webp"

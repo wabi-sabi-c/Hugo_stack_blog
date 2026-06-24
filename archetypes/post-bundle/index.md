@@ -1,4 +1,9 @@
 ---
+# ==========================================
+# 使用方法：
+# 模板叶子包使用
+# hugo new --kind post-bundle post/your_blog_name
+# ==========================================
 title: "{{ replace .Name "-" " " | title }}"
 date: {{ .Date }}
 # draft: true         # 是否为草稿

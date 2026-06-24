@@ -20,7 +20,7 @@ SortBy              = "default"
 [sidebar]
     emoji    = ""
     subtitle = "侘寂(wabi-sabi)，是因为喜欢那种不完美、朴素又安静的感觉。"
-    avatar   = "img/avatar.png"
+    avatar   = "img/avatar.webp"
 
 [article]
     headingAnchor = true
@@ -38,7 +38,7 @@ SortBy              = "default"
 
 [widgets]
     homepage = [
-        { type = "search" },
+        # { type = "search" },
         { type = "archives", params = { limit = 5 } },
         { type = "categories", params = { limit = 10 } },
         { type = "tag-cloud", params = { limit = 10 } },
@@ -96,6 +96,11 @@ SortBy              = "default"
 
     [imageProcessing.thumbnail]
         enabled = true
+
+     # === 新增：封面图专用配置 ===
+    [imageProcessing.cover]
+        enabled = true
+        widths = [400, 800, 1200]   # 移动端 400px，平板 800px，桌面 1200px
 
 # GDPR Cookie Consent Configuration
 # When enabled, analytics and functional cookies require user consent
