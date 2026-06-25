@@ -525,9 +525,9 @@ The input variables, with their default values (some auto generated) are:
 ### Backend Development | **后端开发**
 
 
-Backend docs: [backend/README.md](./backend/README.md).
+Backend docs: [backend/README.md](/Hugo_stack_blog/p/backend/readme.md/).
 
-**后端文档：[backend/README.md](./backend/README.md)。**
+**后端文档：[backend/README.md](/Hugo_stack_blog/p/backend/readme.md/)。**
 
 ---
 
