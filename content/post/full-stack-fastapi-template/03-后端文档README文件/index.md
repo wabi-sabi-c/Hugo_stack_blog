@@ -12,7 +12,7 @@ title: "03 后端文档README文件"
 date: 2026-06-25T11:09:21+08:00
 
 # 草稿状态: 新文章默认为草稿，防止未完成内容被发布
-draft: true
+# draft: true
 
 # 系列名称: 固定值，用于将同一系列的文章关联起来
 series: "Full Stack FastAPI Template"
