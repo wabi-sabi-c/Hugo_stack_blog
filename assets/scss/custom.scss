@@ -983,6 +983,8 @@
     top: 0;
     font-size: 1.2rem;
     color: var(--card-text-color-tertiary);
+    transform: translateX(-50%);  /* 使标签以其中心对齐到 left 位置 */
+    white-space: nowrap;
 }
 .stats-heatmap {
     display: flex;

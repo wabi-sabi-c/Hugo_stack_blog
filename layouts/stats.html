@@ -303,7 +303,8 @@
                 const monthLabel = document.createElement('div');
                 monthLabel.className = 'month-label';
                 monthLabel.innerText = monthName;
-                monthLabel.style.left = `${week * 19}px`;
+                const totalWeeks = 53; // 总列数
+                monthLabel.style.left = ((week + 0.5) / totalWeeks * 100) + '%';
                 monthsContainer.appendChild(monthLabel);
                 currentMonthLabel = month;
             }
