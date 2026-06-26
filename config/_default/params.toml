@@ -12,6 +12,7 @@ SortBy              = "default"
 [footer]
     since      = 2026
     customText = "一个喜欢慢下来记录生活和技术的人"
+     launchDate = "2026-06-20"
 
 [dateFormat]
     published   = ":date_full"

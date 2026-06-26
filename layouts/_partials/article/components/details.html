@@ -20,7 +20,7 @@
                 {{- $Page.Title -}}
             </a>
         </h2>
-    
+
         {{ with $Page.Params.description }}
         <h3 class="article-subtitle">
             {{ . }}
@@ -33,7 +33,7 @@
     {{ $showTime := or $showDate $showReadingTime }}
     {{ $showTranslations := $Page.IsTranslated }}
     {{ $showTags := and $Page.Site.Params.Article.List.ShowTags ($Page.GetTerms "tags") $IsList }}
-    
+
     {{ if or $showTime $showTranslations $showTags }}
     <footer class="article-meta">
         {{ if $showTime }}
@@ -51,6 +51,18 @@
                         {{ T "article.readingTime" $Page.ReadingTime }}
                     </time>
                 {{ end }}
+
+
+                {{/* 新增：字数统计 */}}
+                {{ partial "helper/icon" "toggle-right" }}
+                <span class="article-word-count">
+                    {{- if ge $Page.WordCount 1000 -}}
+                        {{- T "article.wordCountK" (dict "Count" (div (float $Page.WordCount) 1000.0)) -}}
+                    {{- else -}}
+                        {{- T "article.wordCount" (dict "Count" $Page.WordCount) -}}
+                    {{- end -}}
+                </span>
+
             </div>
         {{ end }}
 

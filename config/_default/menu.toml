@@ -22,6 +22,14 @@
 #         icon = "search"
 #         newtab = true
 
+# [[main]]
+#     identifier = "stats"
+#     name       = "统计"
+#     url        = "/stats/"
+#     weight     = 5
+#     [main.params]
+#         icon = "tag"
+
 
 [[social]]
     identifier = "github"
