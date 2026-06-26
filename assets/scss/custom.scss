@@ -931,6 +931,7 @@
 }
 .heatmap-container-premium {
     padding: 2rem;
+    padding-right: 0.5rem !important;
     background: var(--card-background);
     border-radius: 20px;
     border: 1px solid var(--card-border-color);

@@ -201,9 +201,9 @@
                 </svg>
                 {{ T "stats.contribution_heatmap" | default "年度文章贡献热力图" }}
             </h3>
-            <div class="heatmap-container-premium card">
-                <div class="heatmap-scroll-wrapper">
-                    <div class="heatmap-wrapper">
+            <div class="heatmap-container-premium card" style="padding: 1.5rem 0 1.5rem 1.5rem; overflow: hidden;">
+                <div class="heatmap-scroll-wrapper" style="padding-right: 0; overflow-x: auto;">
+                    <div class="heatmap-wrapper" style="display: flex; gap: 0.8rem; width: fit-content; min-width: 100%;">
                         <!-- 左侧：周几标签 -->
                         <div class="heatmap-days-labels">
                             <span></span> <!-- Sun -->
@@ -217,12 +217,12 @@
                         <!-- 右侧：主体（月份 + 网格） -->
                         <div class="heatmap-content">
                             <div id="heatmap-months" class="heatmap-months-labels"></div>
-                            <div id="stats-year-heatmap" class="stats-heatmap"></div>
+                            <div id="stats-year-heatmap" class="stats-heatmap" style="display: flex; gap: 3px; flex-wrap: nowrap; width: 100%; justify-content: space-between;"></div>
                         </div>
                     </div>
                 </div>
 
-                <div class="heatmap-footer">
+                <!-- <div class="heatmap-footer">
                     <div class="heatmap-legend">
                         <span>{{ T "stats.less" | default "Less" }}</span>
                         <div class="legend-cells">
@@ -234,7 +234,7 @@
                         </div>
                         <span>{{ T "stats.more" | default "More" }}</span>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
